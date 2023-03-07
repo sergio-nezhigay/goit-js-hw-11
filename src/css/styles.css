@@ -1,5 +1,17 @@
+:root {
+  --timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  --animation-duration: 250ms;
+  --color-black: #212121;
+}
+
 * {
   box-sizing: border-box;
+}
+
+body,
+p,
+ul {
+  margin: 0;
 }
 
 body {
@@ -8,37 +20,63 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: #fafafa;
-  color: #212121;
+  color: var(--color-black);
   font-size: 16px;
-  line-height: 1.5;
-  padding: 30px;
+  line-height: 1.2;
 }
 
-#search-box {
-  font: inherit;
-  padding: 8px;
-  max-width: 320px;
+.search-form {
+  background-color: #4056b4;
+  padding-top: 8px;
+  padding-bottom: 8px;
   margin-bottom: 16px;
-  border-radius: 3px;
+  font: inherit;
+}
+
+.search-box {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  max-width: 320px;
+  margin-left: auto;
+  margin-right: auto;
+  position: relative;
+}
+
+.search-input {
+  padding: 0 45px 0 10px;
+  border: none;
   outline: none;
+  font-size: 16px;
+  height: 40px;
+  width: 100%;
 }
 
-#search-box:focus {
-  border: 2px solid #3e86d8;
+.search-button {
+  background-color: #f1eff1;
+  border: none;
+  border-radius: 4px;
+  color: var(--color-black);
+  cursor: pointer;
+  font-size: 16px;
+  height: 100%;
+  padding: 10px 15px;
+  position: absolute;
+  right: 0px;
+  top: 0px;
+  transition: background-color var(--animation-duration) var(--timing-function);
 }
 
-:root {
-  --timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  --animation-duration: 250ms;
+.search-button:hover {
+  background-color: #d5cfd5;
 }
 
 .gallery {
   display: grid;
-  max-width: 1140px;
+  max-width: 1460px;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  grid-gap: 12px;
+  grid-gap: 15px;
   justify-content: center;
-  padding: 0;
+  padding: 15px;
   list-style: none;
   margin-left: auto;
   margin-right: auto;
@@ -48,6 +86,7 @@ body {
   position: relative;
   box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.2),
     0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 2px 1px -1px rgba(0, 0, 0, 0.12);
+  transition: transform var(--animation-duration) var(--timing-function);
 }
 
 .gallery__item:hover {
@@ -64,8 +103,8 @@ body {
 .gallery__link {
   display: block;
   text-decoration: none;
-
   height: 100%;
+  color: inherit;
 }
 
 .gallery__link:hover {
@@ -74,4 +113,18 @@ body {
 
 .info {
   display: flex;
+  justify-content: space-between;
+  padding: 15px;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.photo-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }

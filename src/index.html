@@ -7,24 +7,27 @@
     <title>Homework 11</title>
     <link
       rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/simplelightbox/2.12.1/simple-lightbox.css"
-      integrity="sha512-BjQ2UJBKmkJynH20LaFAU4E/kOtE7r7it8YvfwhlyGA9HqB6ZQj1Z9d8tN+y3v2RYunBtcQ8NlbNOkXFkLfobQ=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
     />
   </head>
   <body>
-    <form class="search-form" id="search-form">
-      <input
-        type="text"
-        name="searchQuery"
-        autocomplete="off"
-        placeholder="Search images..."
-      />
-      <button type="submit">Search</button>
+    <form class="search-form">
+      <div class="search-box">
+        <input
+          type="text"
+          class="search-input"
+          name="searchQuery"
+          autocomplete="off"
+          placeholder="Search images..."
+        />
+        <button type="submit" class="search-button">
+          <i class="fa fa-search"></i>
+        </button>
+      </div>
     </form>
+
     <ul class="gallery">
-      <li class="gallery__item">
+      <!-- <li class="gallery__item">
         <a
           href="https://cdn.pixabay.com/photo/2019/05/14/16/43/himilayan-blue-poppy-4202825_1280.jpg"
           alt="image-name1"
@@ -53,74 +56,9 @@
             </div>
           </div>
         </a>
-      </li>
-      <li class="gallery__item">
-        <a
-          href="https://cdn.pixabay.com/photo/2019/05/14/16/43/himilayan-blue-poppy-4202825_1280.jpg"
-          alt="image-name1"
-          class="gallery__link"
-        >
-          <div class="photo-card">
-            <img
-              src="https://cdn.pixabay.com/photo/2019/05/14/16/43/himilayan-blue-poppy-4202825__340.jpg"
-              alt=""
-              loading="lazy"
-              class="gallery__image"
-            />
-            <div class="info">
-              <p class="info-item">
-                <b>Likes</b>
-              </p>
-              <p class="info-item">
-                <b>Views</b>
-              </p>
-              <p class="info-item">
-                <b>Comments</b>
-              </p>
-              <p class="info-item">
-                <b>Downloads</b>
-              </p>
-            </div>
-          </div>
-        </a>
-      </li>
-      <li class="gallery__item">
-        <a
-          href="https://cdn.pixabay.com/photo/2019/05/14/16/43/himilayan-blue-poppy-4202825_1280.jpg"
-          alt="image-name1"
-          class="gallery__link"
-        >
-          <div class="photo-card">
-            <img
-              src="https://cdn.pixabay.com/photo/2019/05/14/16/43/himilayan-blue-poppy-4202825__340.jpg"
-              alt=""
-              loading="lazy"
-              class="gallery__image"
-            />
-            <div class="info">
-              <p class="info-item">
-                <b>Likes</b>
-              </p>
-              <p class="info-item">
-                <b>Views</b>
-              </p>
-              <p class="info-item">
-                <b>Comments</b>
-              </p>
-              <p class="info-item">
-                <b>Downloads</b>
-              </p>
-            </div>
-          </div>
-        </a>
-      </li>
+      </li> -->
     </ul>
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/simplelightbox/2.12.1/simple-lightbox.min.js"
-      integrity="sha512-QoopN2y0b53eP+J2BNc1ff4ImedQAt2xDdhLQkUzTCyfniKkUlHbhweoYxDhCY78Z5EnMtY5rLtjtTK0Yc9Jcw=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    ></script>
+
     <script src="index.js" type="module"></script>
   </body>
 </html>
