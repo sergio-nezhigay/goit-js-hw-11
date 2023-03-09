@@ -12,8 +12,11 @@ class FetchAPI {
     });
   }
 
-  fetchImages(name) {
-    this.params.s = name;
+  fetchImages({ searchQuery, page, per_page }) {
+    this.params.set('q', searchQuery);
+    this.params.set('page', page);
+    this.params.set('per_page', per_page);
+
     const url = new URL(BASE_URL);
     url.search = this.params;
 
