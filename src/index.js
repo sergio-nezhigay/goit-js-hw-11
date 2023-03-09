@@ -7,24 +7,23 @@ import { FetchAPI } from './fetchAPI';
 
 import { imagesMarkup } from './templates';
 
-const loadmoreButtonEl = document.querySelector('.load-more');
-const galleryEl = document.querySelector('.gallery');
+const element = {
+  input: document.querySelector('.search-form'),
+  loadmoreButton: document.querySelector('.load-more'),
+  gallery: document.querySelector('.gallery'),
+};
 
-new SimpleLightbox('.gallery a', {
-  captionsData: 'alt',
-  captionDelay: 250,
-});
-
-let page = 1;
 const per_page = 40;
-let lightBox;
-
+let page = 1;
+let gallery = null;
 const api = new FetchAPI();
-fetchAndShow();
+let searchQuery = 'black';
+
+fetchAndShow(searchQuery);
 
 function fetchAndShow() {
-  const searchQuery = 'black';
-  loadmoreButtonEl.classList.add('hidden');
+  element.loadmoreButton.classList.add('hidden');
+
   api
     .fetchImages({ searchQuery, page, per_page })
     .then(({ hits, totalHits }) => {
@@ -38,7 +37,7 @@ function fetchAndShow() {
           Notiflix.Notify.success(`Hooray! We found ${totalHits} images.`);
         }
         if (page++ <= totalHits / per_page) {
-          loadmoreButtonEl.classList.remove('hidden');
+          element.loadmoreButton.classList.remove('hidden');
         } else {
           Notiflix.Notify.warning(
             "We're sorry, but you've reached the end of search results."
@@ -50,16 +49,16 @@ function fetchAndShow() {
 
 function showImages(images) {
   const galleryItemsHtml = imagesMarkup(images);
-  galleryEl.insertAdjacentHTML('beforeend', galleryItemsHtml);
-  if (!lightBox) {
-    lightBox = new SimpleLightbox('.gallery a', {
+  element.gallery.insertAdjacentHTML('beforeend', galleryItemsHtml);
+  if (!gallery) {
+    gallery = new SimpleLightbox('.gallery a', {
       captionsData: 'alt',
       captionDelay: 250,
     });
   } else {
-    lightBox.refresh();
+    gallery.refresh();
     const { height: cardHeight } =
-      galleryEl.firstElementChild.getBoundingClientRect();
+      element.gallery.firstElementChild.getBoundingClientRect();
 
     window.scrollBy({
       top: cardHeight * 2,
@@ -68,18 +67,19 @@ function showImages(images) {
   }
 }
 
-loadmoreButtonEl.addEventListener('click', fetchAndShow);
+element.loadmoreButton.addEventListener('click', fetchAndShow);
 
-// const element = {
-//   input: document.querySelector('#search-form'),
-// };
-
-// element.input.addEventListener('submit', onSubmit);
-// function onSubmit(e) {
-//   e.preventDefault();
-//   const searchQuery = e.target.elements.searchQuery.value.trim();
-//   console.log(searchQuery);
-//   api
-//     .fetchImages(searchQuery)
-//     .then(({ hits, total }) => showImages(hits, total));
-// }
+element.input.addEventListener('submit', onSubmit);
+function onSubmit(e) {
+  e.preventDefault();
+  searchQuery = e.target.elements.searchQuery.value.trim();
+  if (searchQuery) {
+    page = 1;
+    if (gallery) {
+      gallery.destroy();
+      gallery = null;
+    }
+    element.gallery.innerHTML = '';
+    fetchAndShow();
+  }
+}
