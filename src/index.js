@@ -53,25 +53,25 @@ async function fetchAndShow() {
   }
 }
 
-function showImages(images) {
-  const galleryItemsHtml = imagesMarkup(images);
-  element.gallery.insertAdjacentHTML('beforeend', galleryItemsHtml);
-  if (!gallery) {
-    gallery = new SimpleLightbox('.gallery a', {
-      captionsData: 'alt',
-      captionDelay: 250,
-    });
-  } else {
-    gallery.refresh();
-    const { height: cardHeight } =
-      element.gallery.firstElementChild.getBoundingClientRect();
+// function showImages(images) {
+//   const galleryItemsHtml = imagesMarkup(images);
+//   element.gallery.insertAdjacentHTML('beforeend', galleryItemsHtml);
+//   if (!gallery) {
+//     gallery = new SimpleLightbox('.gallery a', {
+//       captionsData: 'alt',
+//       captionDelay: 250,
+//     });
+//   } else {
+//     gallery.refresh();
+//     const { height: cardHeight } =
+//       element.gallery.firstElementChild.getBoundingClientRect();
 
-    window.scrollBy({
-      top: cardHeight * 2,
-      behavior: 'smooth',
-    });
-  }
-}
+//     window.scrollBy({
+//       top: cardHeight * 2,
+//       behavior: 'smooth',
+//     });
+//   }
+// }
 
 element.loadmoreButton.addEventListener('click', () => fetchAndShow());
 
@@ -111,4 +111,34 @@ function onInput(e) {
   if (e.target.value.length > 0)
     element.deleteSearchButton.classList.remove('hidden');
   else element.deleteSearchButton.classList.add('hidden');
+}
+
+const options = {
+  rootMargin: '0px',
+  threshold: 0.5,
+};
+
+const observer = new IntersectionObserver((entries, observer) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      observer.unobserve(entry.target);
+      page++;
+      fetchAndShow();
+    }
+  });
+}, options);
+
+observer.observe(element.loadmoreButton);
+
+function showImages(images) {
+  const galleryItemsHtml = imagesMarkup(images);
+  element.gallery.insertAdjacentHTML('beforeend', galleryItemsHtml);
+  if (gallery) {
+    gallery.refresh();
+  } else {
+    gallery = new SimpleLightbox('.gallery a', {
+      captionsData: 'alt',
+      captionDelay: 250,
+    });
+  }
 }
