@@ -5,60 +5,34 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Homework 11</title>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
-    />
   </head>
   <body>
     <form class="search-form">
-      <div class="search-box">
+      <div class="search-form__wrapper">
+        <button type="submit" aria-label="Search" class="search-form__button">
+          <i class="fa fa-search hidden"></i>
+        </button>
         <input
           type="text"
-          class="search-input"
+          class="search-form__input"
           name="searchQuery"
           autocomplete="off"
           placeholder="Search images..."
         />
-        <button type="submit" class="search-button">
-          <i class="fa fa-search"></i>
+
+        <button
+          type="button"
+          aria-label="Delete search term"
+          class="search-form__button search-form__button--delete hidden1"
+        >
+          <i class="fa fa-times"></i>
         </button>
       </div>
     </form>
 
-    <ul class="gallery">
-      <!-- <li class="gallery__item">
-        <a
-          href="https://cdn.pixabay.com/photo/2019/05/14/16/43/himilayan-blue-poppy-4202825_1280.jpg"
-          alt="image-name1"
-          class="gallery__link"
-        >
-          <div class="photo-card">
-            <img
-              src="https://cdn.pixabay.com/photo/2019/05/14/16/43/himilayan-blue-poppy-4202825__340.jpg"
-              alt=""
-              loading="lazy"
-              class="gallery__image"
-            />
-            <div class="info">
-              <p class="info-item">
-                <b>Likes</b>
-              </p>
-              <p class="info-item">
-                <b>Views</b>
-              </p>
-              <p class="info-item">
-                <b>Comments</b>
-              </p>
-              <p class="info-item">
-                <b>Downloads</b>
-              </p>
-            </div>
-          </div>
-        </a>
-      </li> -->
-    </ul>
+    <ul class="gallery"></ul>
     <button type="button" class="load-more hidden">Load more</button>
+
     <script src="index.js" type="module"></script>
   </body>
 </html>
