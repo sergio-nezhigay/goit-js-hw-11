@@ -20,9 +20,10 @@ const per_page = 40;
 let page = 1;
 let gallery = null;
 let searchQuery;
+let isPageLoad = true;
 const api = new FetchAPI();
 
-async function fetchAndShow() {
+async function fetchAndShow(page, per_page) {
   try {
     const { hits = [], totalHits = 0 } = await api.fetchImages({
       searchQuery,
@@ -32,6 +33,10 @@ async function fetchAndShow() {
 
     if (hits.length) {
       showImages(hits);
+      if (isPageLoad) {
+        obseveLastUser();
+        isPageLoad = false;
+      }
       if (page === 1) {
         Notiflix.Notify.success(`Hooray! We found ${totalHits} images.`);
       }
@@ -53,27 +58,29 @@ async function fetchAndShow() {
   }
 }
 
-// function showImages(images) {
-//   const galleryItemsHtml = imagesMarkup(images);
-//   element.gallery.insertAdjacentHTML('beforeend', galleryItemsHtml);
-//   if (!gallery) {
-//     gallery = new SimpleLightbox('.gallery a', {
-//       captionsData: 'alt',
-//       captionDelay: 250,
-//     });
-//   } else {
-//     gallery.refresh();
-//     const { height: cardHeight } =
-//       element.gallery.firstElementChild.getBoundingClientRect();
+function showImages(images) {
+  const galleryItemsHtml = imagesMarkup(images);
+  element.gallery.insertAdjacentHTML('beforeend', galleryItemsHtml);
+  if (!gallery) {
+    gallery = new SimpleLightbox('.gallery a', {
+      captionsData: 'alt',
+      captionDelay: 250,
+    });
+  } else {
+    gallery.refresh();
+    const { height: cardHeight } =
+      element.gallery.firstElementChild.getBoundingClientRect();
 
-//     window.scrollBy({
-//       top: cardHeight * 2,
-//       behavior: 'smooth',
-//     });
-//   }
-// }
+    window.scrollBy({
+      top: cardHeight * 2,
+      behavior: 'smooth',
+    });
+  }
+}
 
-element.loadmoreButton.addEventListener('click', () => fetchAndShow());
+element.loadmoreButton.addEventListener('click', () =>
+  fetchAndShow(page, per_page)
+);
 
 element.input.addEventListener('submit', onSubmit);
 function onSubmit(e) {
@@ -83,7 +90,7 @@ function onSubmit(e) {
   } = e.target.elements);
   if (searchQuery) {
     clearGallery();
-    fetchAndShow();
+    fetchAndShow(page, per_page);
   }
 }
 
@@ -113,32 +120,29 @@ function onInput(e) {
   else element.deleteSearchButton.classList.add('hidden');
 }
 
-const options = {
-  rootMargin: '0px',
-  threshold: 0.5,
+const getLastUseEle = () =>
+  document.querySelector('.gallery .gallery__item:last-child');
+
+const infScrollCallback = (entries, observer) => {
+  console.log(
+    '🚀 ~ file: index.js:127 ~ infScrollCallback ~ entries:',
+    entries
+  );
+  // const entry = entries[0];
+  // if (!entry.isIntersecting) return;
+  // pageNumber += 1;
+  // toggleLoading(true);
+  // loadUsers(pageNumber, pageSize)
+  //   .then(resp => {
+  //     obseveLastUser();
+  //     toggleLoading(false);
+  //   })
+  //   .catch(error => toggleLoading(false));
+  // observer.unobserve(entry.target);
 };
 
-const observer = new IntersectionObserver((entries, observer) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      observer.unobserve(entry.target);
-      page++;
-      fetchAndShow();
-    }
-  });
-}, options);
+const infScrollObserver = new IntersectionObserver(infScrollCallback, {});
 
-observer.observe(element.loadmoreButton);
-
-function showImages(images) {
-  const galleryItemsHtml = imagesMarkup(images);
-  element.gallery.insertAdjacentHTML('beforeend', galleryItemsHtml);
-  if (gallery) {
-    gallery.refresh();
-  } else {
-    gallery = new SimpleLightbox('.gallery a', {
-      captionsData: 'alt',
-      captionDelay: 250,
-    });
-  }
-}
+const obseveLastUser = () => {
+  infScrollObserver.observe(getLastUseEle());
+};
