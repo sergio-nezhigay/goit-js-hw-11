@@ -16,6 +16,7 @@ class FetchAPI {
 
   async fetchImages({ searchQuery, page, per_page }) {
     try {
+      console.log('fetchImages...');
       this.params.set('q', searchQuery);
       this.params.set('page', page);
       this.params.set('per_page', per_page);

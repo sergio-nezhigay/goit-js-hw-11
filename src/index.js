@@ -14,34 +14,40 @@ const element = {
   loadmoreButton: document.querySelector('.load-more'),
   gallery: document.querySelector('.gallery'),
   deleteSearchButton: document.querySelector('.search-form__button--delete'),
+  loading: document.querySelector('#loading'),
 };
 
-const per_page = 40;
+const per_page = 20;
 let page = 1;
 let gallery = null;
 let searchQuery;
 let isPageLoad = true;
 const api = new FetchAPI();
 
+const toggleLoading = isLoading => {
+  element.loading.classList.toggle('hidden', !isLoading);
+};
+
 async function fetchAndShow(page, per_page) {
   try {
+    toggleLoading(true);
     const { hits = [], totalHits = 0 } = await api.fetchImages({
       searchQuery,
       page,
       per_page,
     });
-
+    toggleLoading(false);
     if (hits.length) {
       showImages(hits);
       if (isPageLoad) {
-        obseveLastUser();
+        observeLastUser();
         isPageLoad = false;
       }
       if (page === 1) {
         Notiflix.Notify.success(`Hooray! We found ${totalHits} images.`);
       }
 
-      if (page++ <= totalHits / per_page) {
+      if (page <= totalHits / per_page) {
         element.loadmoreButton.classList.remove('hidden');
       } else {
         Notiflix.Notify.warning(
@@ -70,7 +76,6 @@ function showImages(images) {
     gallery.refresh();
     const { height: cardHeight } =
       element.gallery.firstElementChild.getBoundingClientRect();
-
     window.scrollBy({
       top: cardHeight * 2,
       behavior: 'smooth',
@@ -123,26 +128,17 @@ function onInput(e) {
 const getLastUseEle = () =>
   document.querySelector('.gallery .gallery__item:last-child');
 
-const infScrollCallback = (entries, observer) => {
-  console.log(
-    '🚀 ~ file: index.js:127 ~ infScrollCallback ~ entries:',
-    entries
-  );
-  // const entry = entries[0];
-  // if (!entry.isIntersecting) return;
-  // pageNumber += 1;
-  // toggleLoading(true);
-  // loadUsers(pageNumber, pageSize)
-  //   .then(resp => {
-  //     obseveLastUser();
-  //     toggleLoading(false);
-  //   })
-  //   .catch(error => toggleLoading(false));
-  // observer.unobserve(entry.target);
+const infScrollCallback = async (entries, observer) => {
+  const entry = entries[0];
+  if (!entry.isIntersecting) return;
+  page += 1;
+  await fetchAndShow(page, per_page);
+  observeLastUser();
+  observer.unobserve(entry.target);
 };
 
 const infScrollObserver = new IntersectionObserver(infScrollCallback, {});
 
-const obseveLastUser = () => {
+const observeLastUser = () => {
   infScrollObserver.observe(getLastUseEle());
 };
