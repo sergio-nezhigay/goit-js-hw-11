@@ -1,5 +1,5 @@
 import 'simplelightbox/dist/simple-lightbox.min.css';
-import 'font-awesome/css/font-awesome.min.css';
+
 import './css/styles.css';
 
 import SimpleLightbox from 'simplelightbox';
