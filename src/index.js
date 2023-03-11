@@ -16,35 +16,28 @@ const element = {
   loading: document.querySelector('#loading'),
 };
 
-const per_page = 40;
-let page = 1;
 let gallery = null;
-let searchQuery;
 const api = new FetchAPI();
 
 const toggleLoadingIndicator = isLoading => {
   element.loading.classList.toggle('hidden', !isLoading);
 };
 
-const fetchAndShowImages = async ({ page, per_page, searchQuery }) => {
+const fetchAndShowImages = async () => {
   try {
     toggleLoadingIndicator(true);
-    const { hits = [], totalHits = 0 } = await api.fetchImages({
-      searchQuery,
-      page,
-      per_page,
-    });
+    const { hits = [], totalHits = 0 } = await api.fetchImages();
     toggleLoadingIndicator(false);
-    if (!hits.length && page === 1) {
+    if (!hits.length && api.isFirstPage()) {
       Notiflix.Notify.failure(
         'Sorry, there are no images matching your search query. Please try again.'
       );
     } else {
       displayImages(hits);
-      if (page === 1) {
+      if (api.isFirstPage()) {
         Notiflix.Notify.success(`Hooray! We found ${totalHits} images.`);
       }
-      if (page > totalHits / per_page) {
+      if (api.isLastPage()) {
         Notiflix.Notify.warning(
           "We're sorry, but you've reached the end of search results."
         );
@@ -57,7 +50,7 @@ const fetchAndShowImages = async ({ page, per_page, searchQuery }) => {
 };
 
 const shiftRow = () => {
-  if (page !== 1) {
+  if (!api.isFirstPage()) {
     const { height: cardHeight } = document
       .querySelector('.gallery')
       .firstElementChild.getBoundingClientRect();
@@ -84,7 +77,7 @@ const displayImages = images => {
 };
 
 const resetGallery = () => {
-  page = 1;
+  api.reset();
   if (gallery) {
     gallery.destroy();
     gallery = null;
@@ -94,12 +87,12 @@ const resetGallery = () => {
 
 const onSubmitSearchForm = e => {
   e.preventDefault();
-  ({
-    searchQuery: { value: searchQuery },
-  } = e.target.elements);
+
+  const searchQuery = e.target.elements.searchQuery.value.trim();
   if (searchQuery) {
     resetGallery();
-    fetchAndShowImages({ page, per_page, searchQuery });
+    api.searchQuery = searchQuery;
+    fetchAndShowImages();
   }
 };
 
@@ -124,8 +117,8 @@ element.input.addEventListener('input', debounce(onSearchFormInput, 500));
 const infScrollCallback = async (entries, observer) => {
   const entry = entries[0];
   if (!entry.isIntersecting) return;
-  page += 1;
-  await fetchAndShowImages({ page, per_page, searchQuery });
+  api.incrementPage();
+  await fetchAndShowImages();
   observeLastUser();
   observer.unobserve(entry.target);
 };
