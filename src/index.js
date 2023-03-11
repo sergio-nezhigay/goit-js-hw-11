@@ -23,7 +23,7 @@ let searchQuery;
 const api = new FetchAPI();
 
 const toggleLoadingIndicator = isLoading => {
-  element.loading.classList.toggle('hidden', !isLoading);
+  // element.loading.classList.toggle('hidden', !isLoading);
 };
 
 const fetchAndShowImages = async ({ page, per_page, searchQuery }) => {
