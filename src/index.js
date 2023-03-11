@@ -56,6 +56,16 @@ const fetchAndShowImages = async ({ page, per_page, searchQuery }) => {
   }
 };
 
+const shiftRow = () => {
+  const { height: cardHeight } = document
+    .querySelector('.gallery')
+    .firstElementChild.getBoundingClientRect();
+  window.scrollBy({
+    top: cardHeight * 2,
+    behavior: 'smooth',
+  });
+};
+
 const displayImages = images => {
   if (!images.length) return;
   const galleryItemsHtml = imagesMarkup(images);
@@ -67,6 +77,7 @@ const displayImages = images => {
     });
   } else {
     gallery.refresh();
+    shiftRow();
   }
 };
 
