@@ -16,15 +16,12 @@ class FetchAPI {
 
   async fetchImages({ searchQuery, page, per_page }) {
     try {
-      console.log('fetchImages...');
       this.params.set('q', searchQuery);
       this.params.set('page', page);
       this.params.set('per_page', per_page);
       const url = new URL(BASE_URL);
       url.search = this.params;
-
       let res = await axios.get(url);
-
       return res.data;
     } catch (error) {
       throw new Error(`API Error in fetch: ${error.message}`);

@@ -17,32 +17,32 @@ const element = {
   loading: document.querySelector('#loading'),
 };
 
-const per_page = 20;
+const per_page = 40;
 let page = 1;
 let gallery = null;
 let searchQuery;
-let isPageLoad = true;
 const api = new FetchAPI();
 
-const toggleLoading = isLoading => {
+const toggleLoadingIndicator = isLoading => {
   element.loading.classList.toggle('hidden', !isLoading);
 };
 
-async function fetchAndShow(page, per_page) {
+const fetchAndShowImages = async (page, per_page) => {
   try {
-    toggleLoading(true);
+    toggleLoadingIndicator(true);
     const { hits = [], totalHits = 0 } = await api.fetchImages({
       searchQuery,
       page,
       per_page,
     });
-    toggleLoading(false);
-    if (hits.length) {
-      showImages(hits);
-      if (isPageLoad) {
-        observeLastUser();
-        isPageLoad = false;
-      }
+    toggleLoadingIndicator(false);
+    if (!hits.length && page === 1) {
+      Notiflix.Notify.failure(
+        'Sorry, there are no images matching your search query. Please try again.'
+      );
+    } else {
+      displayImages(hits);
+      observeLastUser();
       if (page === 1) {
         Notiflix.Notify.success(`Hooray! We found ${totalHits} images.`);
       }
@@ -53,18 +53,16 @@ async function fetchAndShow(page, per_page) {
         Notiflix.Notify.warning(
           "We're sorry, but you've reached the end of search results."
         );
+        element.loadmoreButton.classList.add('hidden');
       }
-    } else {
-      Notiflix.Notify.failure(
-        'Sorry, there are no images matching your search query. Please try again.'
-      );
     }
   } catch (e) {
     console.log('Error in app: ', e);
   }
-}
+};
 
-function showImages(images) {
+const displayImages = images => {
+  if (!images.length) return;
   const galleryItemsHtml = imagesMarkup(images);
   element.gallery.insertAdjacentHTML('beforeend', galleryItemsHtml);
   if (!gallery) {
@@ -74,32 +72,14 @@ function showImages(images) {
     });
   } else {
     gallery.refresh();
-    const { height: cardHeight } =
-      element.gallery.firstElementChild.getBoundingClientRect();
-    window.scrollBy({
-      top: cardHeight * 2,
-      behavior: 'smooth',
-    });
   }
-}
+};
 
 element.loadmoreButton.addEventListener('click', () =>
-  fetchAndShow(page, per_page)
+  fetchAndShowImages(page, per_page)
 );
 
-element.input.addEventListener('submit', onSubmit);
-function onSubmit(e) {
-  e.preventDefault();
-  ({
-    searchQuery: { value: searchQuery },
-  } = e.target.elements);
-  if (searchQuery) {
-    clearGallery();
-    fetchAndShow(page, per_page);
-  }
-}
-
-function clearGallery() {
+const resetGallery = () => {
   page = 1;
   if (gallery) {
     gallery.destroy();
@@ -107,37 +87,50 @@ function clearGallery() {
     element.gallery.innerHTML = '';
   }
   element.loadmoreButton.classList.add('hidden');
-}
+};
 
-element.deleteSearchButton.addEventListener('click', onDeleteSearchButton);
+const onSubmitSearchForm = e => {
+  e.preventDefault();
+  ({
+    searchQuery: { value: searchQuery },
+  } = e.target.elements);
+  if (searchQuery) {
+    resetGallery();
+    fetchAndShowImages(page, per_page);
+  }
+};
 
-function onDeleteSearchButton() {
+element.input.addEventListener('submit', onSubmitSearchForm);
+
+const onDeleteSearchButtonClick = () => {
   element.input.reset();
-  clearGallery();
+  resetGallery();
   element.deleteSearchButton.classList.add('hidden');
-}
+};
 
-element.input.addEventListener('input', debounce(onInput, 500));
+element.deleteSearchButton.addEventListener('click', onDeleteSearchButtonClick);
 
-function onInput(e) {
+const onSearchFormInput = e => {
   if (e.target.value.length > 0)
     element.deleteSearchButton.classList.remove('hidden');
   else element.deleteSearchButton.classList.add('hidden');
-}
+};
 
-const getLastUseEle = () =>
-  document.querySelector('.gallery .gallery__item:last-child');
+element.input.addEventListener('input', debounce(onSearchFormInput, 500));
 
 const infScrollCallback = async (entries, observer) => {
   const entry = entries[0];
   if (!entry.isIntersecting) return;
   page += 1;
-  await fetchAndShow(page, per_page);
+  await fetchAndShowImages(page, per_page);
   observeLastUser();
   observer.unobserve(entry.target);
 };
 
 const infScrollObserver = new IntersectionObserver(infScrollCallback, {});
+
+const getLastUseEle = () =>
+  document.querySelector('.gallery .gallery__item:last-child');
 
 const observeLastUser = () => {
   infScrollObserver.observe(getLastUseEle());

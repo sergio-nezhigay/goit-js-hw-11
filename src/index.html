@@ -8,32 +8,36 @@
   </head>
   <body>
     <div id="loading" class="hidden"></div>
-    <form class="search-form">
-      <div class="search-form__wrapper">
-        <button type="submit" aria-label="Search" class="search-form__button">
-          <i class="fa fa-search hidden"></i>
-        </button>
-        <input
-          type="text"
-          class="search-form__input"
-          name="searchQuery"
-          autocomplete="off"
-          placeholder="Search images..."
-        />
+    <header>
+      <form class="search-form">
+        <div class="search-form__wrapper">
+          <button type="submit" aria-label="Search" class="search-form__button">
+            <i class="fa fa-search hidden"></i>
+          </button>
+          <input
+            type="text"
+            class="search-form__input"
+            name="searchQuery"
+            autocomplete="off"
+            placeholder="Search images..."
+          />
 
-        <button
-          type="button"
-          aria-label="Delete search term"
-          class="search-form__button search-form__button--delete hidden"
-        >
-          <i class="fa fa-times"></i>
-        </button>
-      </div>
-    </form>
-
-    <ul class="gallery"></ul>
-    <button type="button" class="load-more hidden">Load more</button>
-
+          <button
+            type="button"
+            aria-label="Delete search term"
+            class="search-form__button search-form__button--delete hidden"
+          >
+            <i class="fa fa-times"></i>
+          </button>
+        </div>
+      </form>
+    </header>
+    <main>
+      <ul class="gallery"></ul>
+    </main>
+    <footer>
+      <button type="button" class="load-more hidden">Load more</button>
+    </footer>
     <script src="index.js" type="module"></script>
   </body>
 </html>
