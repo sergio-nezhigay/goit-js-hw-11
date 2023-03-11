@@ -11,7 +11,6 @@ import { imagesMarkup } from './templates';
 
 const element = {
   input: document.querySelector('.search-form'),
-  loadmoreButton: document.querySelector('.load-more'),
   gallery: document.querySelector('.gallery'),
   deleteSearchButton: document.querySelector('.search-form__button--delete'),
   loading: document.querySelector('#loading'),
@@ -27,7 +26,7 @@ const toggleLoadingIndicator = isLoading => {
   element.loading.classList.toggle('hidden', !isLoading);
 };
 
-const fetchAndShowImages = async (page, per_page) => {
+const fetchAndShowImages = async ({ page, per_page, searchQuery }) => {
   try {
     toggleLoadingIndicator(true);
     const { hits = [], totalHits = 0 } = await api.fetchImages({
@@ -46,14 +45,10 @@ const fetchAndShowImages = async (page, per_page) => {
       if (page === 1) {
         Notiflix.Notify.success(`Hooray! We found ${totalHits} images.`);
       }
-
-      if (page <= totalHits / per_page) {
-        element.loadmoreButton.classList.remove('hidden');
-      } else {
+      if (page > totalHits / per_page) {
         Notiflix.Notify.warning(
           "We're sorry, but you've reached the end of search results."
         );
-        element.loadmoreButton.classList.add('hidden');
       }
     }
   } catch (e) {
@@ -75,10 +70,6 @@ const displayImages = images => {
   }
 };
 
-element.loadmoreButton.addEventListener('click', () =>
-  fetchAndShowImages(page, per_page)
-);
-
 const resetGallery = () => {
   page = 1;
   if (gallery) {
@@ -86,7 +77,6 @@ const resetGallery = () => {
     gallery = null;
     element.gallery.innerHTML = '';
   }
-  element.loadmoreButton.classList.add('hidden');
 };
 
 const onSubmitSearchForm = e => {
@@ -96,7 +86,7 @@ const onSubmitSearchForm = e => {
   } = e.target.elements);
   if (searchQuery) {
     resetGallery();
-    fetchAndShowImages(page, per_page);
+    fetchAndShowImages({ page, per_page, searchQuery });
   }
 };
 
@@ -122,7 +112,7 @@ const infScrollCallback = async (entries, observer) => {
   const entry = entries[0];
   if (!entry.isIntersecting) return;
   page += 1;
-  await fetchAndShowImages(page, per_page);
+  await fetchAndShowImages({ page, per_page, searchQuery });
   observeLastUser();
   observer.unobserve(entry.target);
 };
