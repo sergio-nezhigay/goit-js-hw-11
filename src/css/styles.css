@@ -120,6 +120,7 @@ body {
 
 .gallery__image {
   height: 100%;
+  max-height: 270px;
   object-fit: cover;
   transition: transform var(--animation-duration) var(--timing-function);
 }
