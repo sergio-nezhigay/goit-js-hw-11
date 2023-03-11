@@ -41,7 +41,6 @@ const fetchAndShowImages = async ({ page, per_page, searchQuery }) => {
       );
     } else {
       displayImages(hits);
-      observeLastUser();
       if (page === 1) {
         Notiflix.Notify.success(`Hooray! We found ${totalHits} images.`);
       }
@@ -50,6 +49,7 @@ const fetchAndShowImages = async ({ page, per_page, searchQuery }) => {
           "We're sorry, but you've reached the end of search results."
         );
       }
+      observeLastUser();
     }
   } catch (e) {
     console.log('Error in app: ', e);
@@ -57,13 +57,15 @@ const fetchAndShowImages = async ({ page, per_page, searchQuery }) => {
 };
 
 const shiftRow = () => {
-  const { height: cardHeight } = document
-    .querySelector('.gallery')
-    .firstElementChild.getBoundingClientRect();
-  window.scrollBy({
-    top: cardHeight * 2,
-    behavior: 'smooth',
-  });
+  if (page !== 1) {
+    const { height: cardHeight } = document
+      .querySelector('.gallery')
+      .firstElementChild.getBoundingClientRect();
+    window.scrollBy({
+      top: cardHeight * 2,
+      behavior: 'smooth',
+    });
+  }
 };
 
 const displayImages = images => {
