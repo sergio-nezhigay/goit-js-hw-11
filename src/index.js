@@ -6,7 +6,7 @@ import SimpleLightbox from 'simplelightbox';
 import Notiflix from 'notiflix';
 import debounce from 'lodash.debounce';
 
-import { FetchAPI } from './fetchAPI';
+import { PixabayAPI } from './pixabayAPI';
 import { imagesMarkup } from './templates';
 
 const element = {
@@ -17,7 +17,7 @@ const element = {
 };
 
 let gallery = null;
-const api = new FetchAPI();
+const pixabayAPI = new PixabayAPI();
 
 const toggleLoadingIndicator = isLoading => {
   element.loading.classList.toggle('hidden', !isLoading);
@@ -26,18 +26,18 @@ const toggleLoadingIndicator = isLoading => {
 const fetchAndShowImages = async () => {
   try {
     toggleLoadingIndicator(true);
-    const { hits = [], totalHits = 0 } = await api.fetchImages();
+    const { hits = [], totalHits = 0 } = await pixabayAPI.fetchImages();
     toggleLoadingIndicator(false);
-    if (!hits.length && api.isFirstPage()) {
+    if (!hits.length && pixabayAPI.isFirstPage()) {
       Notiflix.Notify.failure(
         'Sorry, there are no images matching your search query. Please try again.'
       );
     } else {
       displayImages(hits);
-      if (api.isFirstPage()) {
+      if (pixabayAPI.isFirstPage()) {
         Notiflix.Notify.success(`Hooray! We found ${totalHits} images.`);
       }
-      if (api.isLastPage()) {
+      if (pixabayAPI.isLastPage()) {
         Notiflix.Notify.warning(
           "We're sorry, but you've reached the end of search results."
         );
@@ -50,7 +50,7 @@ const fetchAndShowImages = async () => {
 };
 
 const shiftRow = () => {
-  if (!api.isFirstPage()) {
+  if (!pixabayAPI.isFirstPage()) {
     const { height: cardHeight } = document
       .querySelector('.gallery')
       .firstElementChild.getBoundingClientRect();
@@ -77,7 +77,7 @@ const displayImages = images => {
 };
 
 const resetGallery = () => {
-  api.reset();
+  pixabayAPI.reset();
   if (gallery) {
     gallery.destroy();
     gallery = null;
@@ -91,7 +91,7 @@ const onSubmitSearchForm = e => {
   const searchQuery = e.target.elements.searchQuery.value.trim();
   if (searchQuery) {
     resetGallery();
-    api.searchQuery = searchQuery;
+    pixabayAPI.searchQuery = searchQuery;
     fetchAndShowImages();
   }
 };
@@ -117,7 +117,7 @@ element.input.addEventListener('input', debounce(onSearchFormInput, 500));
 const infScrollCallback = async (entries, observer) => {
   const entry = entries[0];
   if (!entry.isIntersecting) return;
-  api.incrementPage();
+  pixabayAPI.incrementPage();
   await fetchAndShowImages();
   observeLastUser();
   observer.unobserve(entry.target);
