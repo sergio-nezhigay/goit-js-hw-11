@@ -18,9 +18,7 @@ const axiosInstance = axios.create({
 
 class PixabayAPI {
   constructor() {
-    this._page = 1;
-    this._totalHits = 0;
-    this._q = '';
+    this.reset();
   }
 
   async fetchImages() {
