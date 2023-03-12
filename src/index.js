@@ -125,9 +125,9 @@ const infScrollCallback = async (entries, observer) => {
 
 const infScrollObserver = new IntersectionObserver(infScrollCallback, {});
 
-const getLastUseEle = () =>
+const getLastGalleryItem = () =>
   document.querySelector('.gallery .gallery__item:last-child');
 
 const observeLastUser = () => {
-  infScrollObserver.observe(getLastUseEle());
+  infScrollObserver.observe(getLastGalleryItem());
 };

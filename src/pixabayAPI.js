@@ -17,49 +17,49 @@ const axiosInstance = axios.create({
 });
 
 class PixabayAPI {
-  #page = 1;
-  #totalHits = 0;
-  #q = '';
+  constructor() {
+    this._page = 1;
+    this._totalHits = 0;
+    this._q = '';
+  }
 
-  fetchImages = async () => {
+  async fetchImages() {
     try {
-      const { data } = await axiosInstance.get('', {
+      const res = await axiosInstance.get('', {
         params: {
-          q: this.#q,
-          page: this.#page,
+          q: this._q,
+          page: this._page,
         },
       });
 
-      const { totalHits } = data;
-      this.#totalHits = totalHits;
-
-      return data;
+      this._totalHits = res.data?.totalHits;
+      return res.data;
     } catch (error) {
       throw new Error(`API Error in fetch: ${error.message}`);
     }
-  };
+  }
 
-  setSearchQuery = q => {
-    this.#q = q;
-  };
+  set searchQuery(q) {
+    this._q = q;
+  }
 
-  incrementPage = () => {
-    this.#page++;
-  };
+  incrementPage() {
+    this._page++;
+  }
 
-  reset = () => {
-    this.#page = 1;
-    this.#totalHits = 0;
-    this.#q = '';
-  };
+  reset() {
+    this._page = 1;
+    this._totalHits = 0;
+    this._q = '';
+  }
 
-  isFirstPage = () => {
-    return this.#page === 1;
-  };
+  isFirstPage() {
+    return this._page === 1;
+  }
 
-  isLastPage = () => {
-    return this.#page > this.#totalHits / PER_PAGE;
-  };
+  isLastPage() {
+    return this._page > this._totalHits / PER_PAGE;
+  }
 }
 
 export { PixabayAPI };
